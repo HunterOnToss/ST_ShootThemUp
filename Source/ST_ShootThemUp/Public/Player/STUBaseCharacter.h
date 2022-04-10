@@ -37,7 +37,16 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Animation")
     UAnimMontage* DeathAnimMontage;
 
-	// Called when the game starts or when spawned
+	// ============================= LANDED DAMAGE =========================
+	UPROPERTY(EditDefaultsOnly, Category = "Movement")
+    FVector2D LandedDamageVelocity = FVector2D(900.0f, 1200.0f);
+
+	UPROPERTY(EditDefaultsOnly, Category = "Movement")
+    FVector2D LandedDamage = FVector2D(10.0f, 100.0f);
+
+
+	// =====================================================================
+	
 	virtual void BeginPlay() override;
 
 public:	
@@ -69,4 +78,9 @@ private:
 
 	void OnDeath();
     void OnHealthChanged(float Health);
+
+	// For DYNAMIC delegate need UFUNCTION cuz correct work GC
+    UFUNCTION()
+    void OnGroundLanded(const FHitResult& Hit);
+
 };
