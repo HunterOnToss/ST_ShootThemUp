@@ -9,8 +9,9 @@
 #include "Components/STUHealthComponent.h"
 #include "Components/TextRenderComponent.h"
 #include "GameFramework/Controller.h"
+#include "Weapon/STUBaseWeapon.h"
 
-DEFINE_LOG_CATEGORY_STATIC(BaseCharacterLog, All, All);
+DEFINE_LOG_CATEGORY_STATIC(LogBaseCharacterLog, All, All);
 
 // Sets default values
 ASTUBaseCharacter::ASTUBaseCharacter(const FObjectInitializer& ObjInit)
@@ -22,6 +23,8 @@ ASTUBaseCharacter::ASTUBaseCharacter(const FObjectInitializer& ObjInit)
     SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>("SpringArmComponent");
     SpringArmComponent->SetupAttachment(GetRootComponent());
     SpringArmComponent->bUsePawnControlRotation = true;
+    SpringArmComponent->SocketOffset = FVector(0.0f, 100.0f, 80.0f);
+
 
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>("CameraComponent");
     CameraComponent->SetupAttachment(SpringArmComponent);
@@ -29,6 +32,7 @@ ASTUBaseCharacter::ASTUBaseCharacter(const FObjectInitializer& ObjInit)
     HealthComponent = CreateDefaultSubobject<USTUHealthComponent>("HealthComponent");
     HealthTextComponent = CreateDefaultSubobject<UTextRenderComponent>("HealthTextComponent");
     HealthTextComponent->SetupAttachment(GetRootComponent());
+    HealthTextComponent->SetOwnerNoSee(true);
 }
 
 // Called when the game starts or when spawned
@@ -47,6 +51,7 @@ void ASTUBaseCharacter::BeginPlay()
 
     LandedDelegate.AddDynamic(this, &ASTUBaseCharacter::OnGroundLanded);
 
+    SpawnWeapon();
 }
 
 // Called every frame
@@ -130,7 +135,7 @@ void ASTUBaseCharacter::OnStopRunning()
 
 void ASTUBaseCharacter::OnDeath() 
 {
-    UE_LOG(BaseCharacterLog, Display, TEXT("Player %s is Dead!"), *GetName());
+    UE_LOG(LogBaseCharacterLog, Display, TEXT("Player %s is Dead!"), *GetName());
 
     PlayAnimMontage(DeathAnimMontage);
     GetCharacterMovement()->DisableMovement();
@@ -150,12 +155,27 @@ void ASTUBaseCharacter::OnHealthChanged(float Health)
 void ASTUBaseCharacter::OnGroundLanded(const FHitResult& Hit) 
 {
     const auto FallVelocityZ = -GetVelocity().Z;
-    UE_LOG(BaseCharacterLog, Display, TEXT("On landed: %f"), FallVelocityZ);
+    UE_LOG(LogBaseCharacterLog, Display, TEXT("On landed: %f"), FallVelocityZ);
 
     if (FallVelocityZ < LandedDamageVelocity.X)
         return;
 
     const float FinalDamage = FMath::GetMappedRangeValueClamped(LandedDamageVelocity, LandedDamage, FallVelocityZ);
-    UE_LOG(BaseCharacterLog, Display, TEXT("Landed Damage: %f"), FinalDamage);
+    UE_LOG(LogBaseCharacterLog, Display, TEXT("Landed Damage: %f"), FinalDamage);
     TakeDamage(FinalDamage, FDamageEvent{}, nullptr, nullptr);
+}
+
+void ASTUBaseCharacter::SpawnWeapon() 
+{
+    if (!GetWorld())
+        return;
+
+    const auto Weapon = GetWorld()->SpawnActor<ASTUBaseWeapon>(WeaponClass);
+    
+    if (Weapon)
+    {
+        FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, false);
+        Weapon->AttachToComponent(GetMesh(), AttachmentRules, "WeaponSocket");
+    }
+
 }
