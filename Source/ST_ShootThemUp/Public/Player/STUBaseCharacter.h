@@ -10,7 +10,7 @@ class UCameraComponent;
 class USpringArmComponent;
 class USTUHealthComponent;
 class UTextRenderComponent;
-class ASTUBaseWeapon;
+class USTUWeaponComponent;
 
 UCLASS()
 class ST_SHOOTTHEMUP_API ASTUBaseCharacter : public ACharacter
@@ -33,6 +33,9 @@ protected:
     USTUHealthComponent* HealthComponent;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
+    USTUWeaponComponent* WeaponComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
     UTextRenderComponent* HealthTextComponent;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Animation")
@@ -48,10 +51,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Damage")
     FVector2D LandedDamage = FVector2D(10.0f, 100.0f);
 
-	// =====================================================================
-	
-	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
-    TSubclassOf<ASTUBaseWeapon> WeaponClass;  
+	// =====================================================================  
 
 	virtual void BeginPlay() override;
 
@@ -88,7 +88,5 @@ private:
 	// For DYNAMIC delegate need UFUNCTION cuz correct work GC
     UFUNCTION()
     void OnGroundLanded(const FHitResult& Hit);
-
-	void SpawnWeapon();
 
 };
