@@ -21,7 +21,31 @@ float USTUPlayerHUDWidget::GetHealthPercent() const
     return 0.0f;
 }
 
-bool USTUPlayerHUDWidget::GetWeaponUIData(FWeaponUIData& OutUIData) const
+bool USTUPlayerHUDWidget::GetCurrentWeaponUIData(FWeaponUIData& UIData) const
+{
+    const auto WeaponComponent = GetWeaponComponent();
+
+    if (WeaponComponent)
+    {
+        return WeaponComponent->GetCurrentWeaponUIData(UIData);
+    }
+
+    return false;
+}
+
+bool USTUPlayerHUDWidget::GetCurrentWeaponAmmoData(FAmmoData& OutAmmoData) const
+{
+    const auto WeaponComponent = GetWeaponComponent();
+
+    if (WeaponComponent)
+    {
+        return WeaponComponent->GetCurrentWeaponAmmoData(OutAmmoData);
+    }
+
+    return false;
+}
+
+USTUWeaponComponent* USTUPlayerHUDWidget::GetWeaponComponent() const
 {
     const auto Player = GetOwningPlayerPawn();
     if (Player)
@@ -31,8 +55,8 @@ bool USTUPlayerHUDWidget::GetWeaponUIData(FWeaponUIData& OutUIData) const
 
         if (WeaponComponent)
         {
-            return WeaponComponent->GetWeaponUIData(OutUIData);
+            return WeaponComponent;
         }
     }
-    return false;
+    return nullptr;
 }
