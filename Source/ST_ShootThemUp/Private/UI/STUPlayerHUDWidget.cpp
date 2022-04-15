@@ -7,17 +7,6 @@
 
 float USTUPlayerHUDWidget::GetHealthPercent() const
 {
-    /* const auto Player = GetOwningPlayerPawn();
-    if (Player)
-    {
-        const auto Component = Player->GetComponentByClass(USTUHealthComponent::StaticClass());
-        const auto HealthComponent = Cast<USTUHealthComponent>(Component);
-
-        if (HealthComponent)
-        {
-            return HealthComponent->GetHealthWithPercent();
-        }
-    }*/
     const auto HealthComponent = GetHealthComponent();
 
     if (HealthComponent)
@@ -54,12 +43,14 @@ bool USTUPlayerHUDWidget::GetCurrentWeaponAmmoData(FAmmoData& OutAmmoData) const
 
 bool USTUPlayerHUDWidget::IsPlayerAlive() const
 {
-    return false;
+    const auto HealthComponent = GetHealthComponent();
+    return HealthComponent && !HealthComponent->IsDead();
 }
 
 bool USTUPlayerHUDWidget::IsPlayerSpectating() const
 {
-    return false;
+    const auto Controller = GetOwningPlayer();
+    return Controller && Controller->GetStateName() == NAME_Spectating;
 }
 
 USTUWeaponComponent* USTUPlayerHUDWidget::GetWeaponComponent() const
