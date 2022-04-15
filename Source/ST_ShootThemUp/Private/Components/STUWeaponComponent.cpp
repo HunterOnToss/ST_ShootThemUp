@@ -71,6 +71,16 @@ void USTUWeaponComponent::Reload()
     ChangeClip();
 }
 
+bool USTUWeaponComponent::GetWeaponUIData(FWeaponUIData& OutUIData) const
+{
+    if (CurrentWeapon)
+    {
+        OutUIData = CurrentWeapon->GetUIData();
+        return true;
+    }
+    return false;
+}
+
 void USTUWeaponComponent::SpawnWeapons()
 {
     ACharacter* Character = Cast<ACharacter>(GetOwner());

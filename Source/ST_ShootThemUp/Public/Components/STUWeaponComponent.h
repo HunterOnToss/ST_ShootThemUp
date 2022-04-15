@@ -22,6 +22,8 @@ public:
     void EndFire();
     void NextWeapon();
     void Reload();
+    
+    bool GetWeaponUIData(FWeaponUIData& OutUIData) const;
 
 protected:
 	
