@@ -22,6 +22,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Health")
     bool IsDead() const { return FMath::IsNearlyZero(Health); }
 
+	UFUNCTION(BlueprintCallable, Category = "Health")
+    float GetHealthWithPercent() const { return Health / MaxHealth; }
+
 	float GetHealth() const { return Health; }
 
 protected:
