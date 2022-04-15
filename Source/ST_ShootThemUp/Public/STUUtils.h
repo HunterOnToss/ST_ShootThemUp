@@ -5,7 +5,7 @@ class STUUtils
 public:
 
 	template<typename T> 
-	static T* GetSTUPlayerController(APawn* PlayerPawn) 
+	static T* GetSTUPlayerComponent(APawn* PlayerPawn) 
 	{
         if (PlayerPawn)
         {
