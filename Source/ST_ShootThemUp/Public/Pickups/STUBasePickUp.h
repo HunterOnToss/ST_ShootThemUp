@@ -6,21 +6,27 @@
 #include "GameFramework/Actor.h"
 #include "STUBasePickUp.generated.h"
 
+class USphereComponent;
+
 UCLASS()
 class ST_SHOOTTHEMUP_API ASTUBasePickUp : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
+
 	ASTUBasePickUp();
 
 protected:
-	// Called when the game starts or when spawned
+	
+	UPROPERTY(VisibleAnywhere, Category = "Pickup")
+    USphereComponent* CollisionComponent;
+
 	virtual void BeginPlay() override;
+    virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 
 public:	
-	// Called every frame
+	
 	virtual void Tick(float DeltaTime) override;
 
 };

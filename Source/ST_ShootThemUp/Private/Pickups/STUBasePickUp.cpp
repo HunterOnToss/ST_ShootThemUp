@@ -2,26 +2,38 @@
 
 
 #include "Pickups/STUBasePickUp.h"
+#include "Components/SphereComponent.h"
 
-// Sets default values
+DEFINE_LOG_CATEGORY_STATIC(LogBasePickup, All, All);
+
 ASTUBasePickUp::ASTUBasePickUp()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	CollisionComponent = CreateDefaultSubobject<USphereComponent>("CollisionComponent");
+    CollisionComponent->InitSphereRadius(50.0f);
+    CollisionComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+    CollisionComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
+    SetRootComponent(CollisionComponent);
 }
 
-// Called when the game starts or when spawned
 void ASTUBasePickUp::BeginPlay()
 {
 	Super::BeginPlay();
 	
 }
 
-// Called every frame
 void ASTUBasePickUp::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void ASTUBasePickUp::NotifyActorBeginOverlap(AActor* OtherActor)
+{
+    Super::NotifyActorBeginOverlap(OtherActor);
+
+	UE_LOG(LogBasePickup, Display, TEXT("Pickup"));
+    Destroy();
 }
 
