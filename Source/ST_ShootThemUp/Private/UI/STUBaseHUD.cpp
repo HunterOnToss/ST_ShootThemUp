@@ -3,6 +3,7 @@
 
 #include "UI/STUBaseHUD.h"
 #include "Engine/Canvas.h"
+#include "Blueprint/UserWidget.h"
 
 void ASTUBaseHUD::DrawHUD() 
 {
@@ -11,7 +12,19 @@ void ASTUBaseHUD::DrawHUD()
     DrawCrosshair();
 }
 
-void ASTUBaseHUD::DrawCrosshair() 
+void ASTUBaseHUD::BeginPlay() 
+{
+    Super::BeginPlay();
+
+    auto PlayerHUDWidget = CreateWidget<UUserWidget>(GetWorld(), PlayerHudWidgetKlass);
+    
+    if (PlayerHUDWidget)
+    {
+        PlayerHUDWidget->AddToViewport();
+    }
+}
+
+void ASTUBaseHUD::DrawCrosshair()
 {
     const TInterval<float> Center(Canvas->SizeX * 0.5f, Canvas->SizeY * 0.5f);
     
