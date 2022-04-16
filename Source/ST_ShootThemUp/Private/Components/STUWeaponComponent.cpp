@@ -91,6 +91,19 @@ bool USTUWeaponComponent::GetCurrentWeaponAmmoData(FAmmoData& OutAmmoData) const
     return false;
 }
 
+bool USTUWeaponComponent::TryToAddAmmo(TSubclassOf<ASTUBaseWeapon> WeaponType, int32 ClipsAmount)
+{
+    for (const auto Weapon : Weapons)
+    {
+        if (Weapon && Weapon->IsA(WeaponType))
+        {
+            return Weapon->TryToAddAmmo(ClipsAmount);
+        }
+    }
+
+    return false;
+}
+
 void USTUWeaponComponent::SpawnWeapons()
 {
     ACharacter* Character = Cast<ACharacter>(GetOwner());
@@ -222,10 +235,27 @@ bool USTUWeaponComponent::CanReload() const
            && CurrentWeapon->CanReload();
 }
 
-void USTUWeaponComponent::OnEmptyClip() 
+void USTUWeaponComponent::OnEmptyClip(ASTUBaseWeapon* AmmoEmptyWeapon)
 {
-    ChangeClip();
+    if (!AmmoEmptyWeapon)
+        return;
+
+    if (CurrentWeapon == AmmoEmptyWeapon)
+    {
+        ChangeClip();
+    }
+    else
+    {
+        for (auto elem : Weapons)
+        {
+            if (elem == AmmoEmptyWeapon)
+            {
+                elem->ChangeClip();
+            }
+        }
+    }
 }
+
 
 void USTUWeaponComponent::ChangeClip() 
 {
