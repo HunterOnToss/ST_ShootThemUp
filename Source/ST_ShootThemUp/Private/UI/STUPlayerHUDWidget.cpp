@@ -8,7 +8,7 @@
 
 float USTUPlayerHUDWidget::GetHealthPercent() const
 {
-    const auto HealthComponent = STUUtils::GetSTUPlayerController<USTUHealthComponent>(GetOwningPlayerPawn());
+    const auto HealthComponent = STUUtils::GetSTUPlayerComponent<USTUHealthComponent>(GetOwningPlayerPawn());
 
     if (HealthComponent)
     {
@@ -20,7 +20,7 @@ float USTUPlayerHUDWidget::GetHealthPercent() const
 
 bool USTUPlayerHUDWidget::GetCurrentWeaponUIData(FWeaponUIData& UIData) const
 {
-    const auto WeaponComponent = STUUtils::GetSTUPlayerController<USTUWeaponComponent>(GetOwningPlayerPawn());
+    const auto WeaponComponent = STUUtils::GetSTUPlayerComponent<USTUWeaponComponent>(GetOwningPlayerPawn());
 
     if (WeaponComponent)
     {
@@ -32,7 +32,7 @@ bool USTUPlayerHUDWidget::GetCurrentWeaponUIData(FWeaponUIData& UIData) const
 
 bool USTUPlayerHUDWidget::GetCurrentWeaponAmmoData(FAmmoData& OutAmmoData) const
 {
-    const auto WeaponComponent = STUUtils::GetSTUPlayerController<USTUWeaponComponent>(GetOwningPlayerPawn());
+    const auto WeaponComponent = STUUtils::GetSTUPlayerComponent<USTUWeaponComponent>(GetOwningPlayerPawn());
 
     if (WeaponComponent)
     {
@@ -44,7 +44,7 @@ bool USTUPlayerHUDWidget::GetCurrentWeaponAmmoData(FAmmoData& OutAmmoData) const
 
 bool USTUPlayerHUDWidget::IsPlayerAlive() const
 {
-    const auto HealthComponent = STUUtils::GetSTUPlayerController<USTUHealthComponent>(GetOwningPlayerPawn());
+    const auto HealthComponent = STUUtils::GetSTUPlayerComponent<USTUHealthComponent>(GetOwningPlayerPawn());
     return HealthComponent && !HealthComponent->IsDead();
 }
 

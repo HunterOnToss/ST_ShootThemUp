@@ -2,9 +2,9 @@
 #include "STUCoreTypes.generated.h"
 
 // ============================ WEAPON ============================
-DECLARE_MULTICAST_DELEGATE(FOnClipEmptySignature);
-
 class ASTUBaseWeapon;
+
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnClipEmptySignature, ASTUBaseWeapon*);
 
 USTRUCT(BlueprintType)
 struct FAmmoData
