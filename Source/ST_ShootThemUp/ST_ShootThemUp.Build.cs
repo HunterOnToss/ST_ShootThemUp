@@ -15,6 +15,7 @@ public class ST_ShootThemUp : ModuleRules
 			"Engine", 
 			"InputCore" ,
 			"Niagara",
+			"PhysicsCore",
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
