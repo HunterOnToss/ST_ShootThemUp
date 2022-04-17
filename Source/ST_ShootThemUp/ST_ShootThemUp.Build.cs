@@ -13,7 +13,8 @@ public class ST_ShootThemUp : ModuleRules
 			"Core", 
 			"CoreUObject", 
 			"Engine", 
-			"InputCore" 
+			"InputCore" ,
+			"Niagara",
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
@@ -24,6 +25,7 @@ public class ST_ShootThemUp : ModuleRules
 			"ST_ShootThemUp/Public/Components", 
 			"ST_ShootThemUp/Public/Dev",
 			"ST_ShootThemUp/Public/Weapon",
+			"ST_ShootThemUp/Public/Weapon/Components",
 			"ST_ShootThemUp/Public/UI",
 			"ST_ShootThemUp/Public/Animation",
 		});

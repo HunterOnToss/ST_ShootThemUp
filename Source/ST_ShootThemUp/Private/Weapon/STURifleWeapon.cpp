@@ -4,6 +4,19 @@
 #include "Weapon/STURifleWeapon.h"
 #include "Engine/World.h"
 #include "DrawDebugHelpers.h"
+#include "Weapon/Components/STUWeaponFXComponent.h"
+
+ASTURifleWeapon::ASTURifleWeapon() 
+{
+    WeaponFXComponent = CreateDefaultSubobject<USTUWeaponFXComponent>("WeaponComponent");
+}
+
+void ASTURifleWeapon::BeginPlay() 
+{
+    Super::BeginPlay();
+
+    check(WeaponFXComponent);
+}
 
 void ASTURifleWeapon::StartFire()
 {
@@ -37,13 +50,14 @@ void ASTURifleWeapon::MakeTheShot()
     if (HitResult.bBlockingHit)
     {
         MakeTheDamage(HitResult);
-        DrawDebugLine(GetWorld(), GetMuzzleWorldLocation(), HitResult.ImpactPoint, FColor::Red, false, 3.0f, 0, 3.0f);
-        DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 10.0f, 24, FColor::Magenta, false, 5.0f);
+        //DrawDebugLine(GetWorld(), GetMuzzleWorldLocation(), HitResult.ImpactPoint, FColor::Red, false, 3.0f, 0, 3.0f);
+        //DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 10.0f, 24, FColor::Magenta, false, 5.0f);
         // UE_LOG(LogWeaponBase, Display, TEXT("====== Bone: %s ======"), *HitResult.BoneName.ToString());
+        WeaponFXComponent->PlayImpactFx(HitResult);
     }
     else
     {
-        DrawDebugLine(GetWorld(), GetMuzzleWorldLocation(), TraceEnd, FColor::Red, false, 3.0f, 0, 3.0f);
+        //DrawDebugLine(GetWorld(), GetMuzzleWorldLocation(), TraceEnd, FColor::Red, false, 3.0f, 0, 3.0f);
     }
 
     DecreaseAmmo();
