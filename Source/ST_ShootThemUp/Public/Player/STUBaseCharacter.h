@@ -83,7 +83,7 @@ private:
     void OnStopRunning();
 
 	void OnDeath();
-    void OnHealthChanged(float Health);
+    void OnHealthChanged(float Health, float HealthDelta);
 
 	// For DYNAMIC delegate need UFUNCTION cuz correct work GC
     UFUNCTION()
