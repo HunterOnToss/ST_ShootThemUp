@@ -8,6 +8,8 @@
 #include "STUBaseWeapon.generated.h"
 
 class USkeletalMeshComponent;
+class UNiagaraSystem;
+class UNiagaraComponent;
 
 UCLASS()
 class ST_SHOOTTHEMUP_API ASTUBaseWeapon : public AActor
@@ -44,6 +46,14 @@ protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
     FWeaponUIData UIData;
 
+    // ========================== VFX ==============================
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX");
+    UNiagaraSystem* MuzzleFX;
+
+    UNiagaraComponent* SpawnMuzzleFX();
+
+    // =============================================================
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
     float TraceMaxDistance = 15000.0f;

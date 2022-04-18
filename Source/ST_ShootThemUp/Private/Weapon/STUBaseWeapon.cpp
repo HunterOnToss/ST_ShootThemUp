@@ -1,46 +1,40 @@
 // Shoot Them Up Game. All Right Reserved 2022.
 
-
 #include "Weapon/STUBaseWeapon.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Engine/World.h"
 #include "DrawDebugHelpers.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/Character.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogWeaponBase, All, All);
 
 ASTUBaseWeapon::ASTUBaseWeapon()
 {
 
-	PrimaryActorTick.bCanEverTick = false;
+    PrimaryActorTick.bCanEverTick = false;
 
-	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>("WeaponMesh");
+    WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>("WeaponMesh");
     SetRootComponent(WeaponMesh);
-
 }
 
 void ASTUBaseWeapon::BeginPlay()
 {
-	Super::BeginPlay();
-	
-	check(WeaponMesh);
+    Super::BeginPlay();
+
+    check(WeaponMesh);
     checkf(DefaultAmmo.Bullets > 0, TEXT("Bullets count couldn't be less or equal zero!"));
     checkf(DefaultAmmo.Clips > 0, TEXT("Clips count couldn't be less or equal zero!"));
     CurrentAmmo = DefaultAmmo;
 }
 
-void ASTUBaseWeapon::StartFire() 
-{
-}
+void ASTUBaseWeapon::StartFire() {}
 
-void ASTUBaseWeapon::StopFire() 
-{
-}
+void ASTUBaseWeapon::StopFire() {}
 
-void ASTUBaseWeapon::MakeTheShot() 
-{
-}
+void ASTUBaseWeapon::MakeTheShot() {}
 
 APlayerController* ASTUBaseWeapon::GetPlayerController() const
 {
@@ -49,7 +43,6 @@ APlayerController* ASTUBaseWeapon::GetPlayerController() const
         return nullptr;
 
     return Player->GetController<APlayerController>();
-    
 }
 
 bool ASTUBaseWeapon::GetPlayerViewPoint(FVector& ViewLocation, FRotator& ViewRotation) const
@@ -75,7 +68,7 @@ bool ASTUBaseWeapon::GetTraceData(FVector& TraceStart, FVector& TraceEnd) const
     if (!GetPlayerViewPoint(ViewLocation, ViewRotation))
         return false;
 
-    TraceStart = ViewLocation; // SocketTransform.GetLocation();
+    TraceStart = ViewLocation;                            // SocketTransform.GetLocation();
     const FVector ShootDirection = ViewRotation.Vector(); // SocketTransform.GetRotation().GetForwardVector();
     TraceEnd = TraceStart + ShootDirection * TraceMaxDistance;
     return true;
@@ -93,7 +86,7 @@ void ASTUBaseWeapon::MakeHit(FHitResult& HitResult, const FVector& TraceStart, c
     GetWorld()->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd, ECollisionChannel::ECC_Visibility, CollisionParams);
 }
 
-void ASTUBaseWeapon::DecreaseAmmo() 
+void ASTUBaseWeapon::DecreaseAmmo()
 {
     if (CurrentAmmo.Bullets == 0)
     {
@@ -123,11 +116,10 @@ bool ASTUBaseWeapon::IsClipEmpty() const
 
 bool ASTUBaseWeapon::IsAmmoFull() const
 {
-    return CurrentAmmo.Clips == DefaultAmmo.Clips && 
-           CurrentAmmo.Bullets == DefaultAmmo.Bullets;
+    return CurrentAmmo.Clips == DefaultAmmo.Clips && CurrentAmmo.Bullets == DefaultAmmo.Bullets;
 }
 
-void ASTUBaseWeapon::ChangeClip() 
+void ASTUBaseWeapon::ChangeClip()
 {
     if (!CurrentAmmo.Infinite)
     {
@@ -151,7 +143,7 @@ bool ASTUBaseWeapon::TryToAddAmmo(int32 ClipsAmount)
 {
     if (CurrentAmmo.Infinite || IsAmmoFull() || ClipsAmount <= 0)
         return false;
-    
+
     if (IsAmmoEmpty())
     {
         // DefaultAmmo.Clips + 1 for Reload
@@ -175,7 +167,7 @@ bool ASTUBaseWeapon::TryToAddAmmo(int32 ClipsAmount)
             UE_LOG(LogWeaponBase, Display, TEXT("===== AMMO if FULL now! ====="))
         }
     }
-    else 
+    else
     {
         CurrentAmmo.Bullets = DefaultAmmo.Bullets;
         UE_LOG(LogWeaponBase, Display, TEXT("===== Bullets We are ADDED! ====="))
@@ -184,9 +176,19 @@ bool ASTUBaseWeapon::TryToAddAmmo(int32 ClipsAmount)
     return true;
 }
 
-void ASTUBaseWeapon::LogAmmo() 
+void ASTUBaseWeapon::LogAmmo()
 {
     FString AmmoInfo = "Ammo: " + FString::FromInt(CurrentAmmo.Bullets) + " / ";
     AmmoInfo += CurrentAmmo.Infinite ? "Infinite" : FString::FromInt(CurrentAmmo.Clips);
     UE_LOG(LogWeaponBase, Display, TEXT("%s"), *AmmoInfo)
+}
+
+UNiagaraComponent* ASTUBaseWeapon::SpawnMuzzleFX()
+{
+    return UNiagaraFunctionLibrary::SpawnSystemAttached(MuzzleFX, //
+        WeaponMesh,                                               //
+        MuzzleSocketName,                                         //
+        FVector::ZeroVector,                                      //
+        FRotator::ZeroRotator,                                    //
+        EAttachLocation::SnapToTarget, true);
 }
