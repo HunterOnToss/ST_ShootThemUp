@@ -29,6 +29,7 @@ public class ST_ShootThemUp : ModuleRules
 			"ST_ShootThemUp/Public/Weapon/Components",
 			"ST_ShootThemUp/Public/UI",
 			"ST_ShootThemUp/Public/Animation",
+			"ST_ShootThemUp/Public/AI",
 		});
 
 		// Uncomment if you are using Slate UI
