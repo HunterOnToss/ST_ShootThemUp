@@ -6,12 +6,13 @@
 #include "AIController.h"
 #include "STUAIController.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class ST_SHOOTTHEMUP_API ASTUAIController : public AAIController
 {
 	GENERATED_BODY()
-	
+
+protected:
+
+    virtual void OnPossess(APawn* InPawn) override;
+    
 };

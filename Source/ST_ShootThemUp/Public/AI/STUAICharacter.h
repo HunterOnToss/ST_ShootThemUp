@@ -6,9 +6,8 @@
 #include "Player/STUBaseCharacter.h"
 #include "STUAICharacter.generated.h"
 
-/**
- * 
- */
+class UBehaviorTree;
+
 UCLASS()
 class ST_SHOOTTHEMUP_API ASTUAICharacter : public ASTUBaseCharacter
 {
@@ -17,4 +16,7 @@ class ST_SHOOTTHEMUP_API ASTUAICharacter : public ASTUBaseCharacter
 public:
 
 	ASTUAICharacter(const FObjectInitializer& ObjInit);
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="AI")
+    UBehaviorTree* BehaviorTreeAsset;
 };
