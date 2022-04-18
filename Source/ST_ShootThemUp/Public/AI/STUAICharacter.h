@@ -14,4 +14,7 @@ class ST_SHOOTTHEMUP_API ASTUAICharacter : public ASTUBaseCharacter
 {
 	GENERATED_BODY()
 	
+public:
+
+	ASTUAICharacter(const FObjectInitializer& ObjInit);
 };
