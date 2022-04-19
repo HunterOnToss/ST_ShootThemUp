@@ -34,6 +34,11 @@ void ASTUBasePickUp::Tick(float DeltaTime)
 
 }
 
+bool ASTUBasePickUp::CouldBeTaken() const
+{
+    return !GetWorldTimerManager().IsTimerActive(RespawnTimerHandle);
+}
+
 void ASTUBasePickUp::NotifyActorBeginOverlap(AActor* OtherActor)
 {
     Super::NotifyActorBeginOverlap(OtherActor);
@@ -68,8 +73,7 @@ void ASTUBasePickUp::PickupWasTaken()
 {
     CollisionComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
     GetRootComponent()->SetVisibility(false, true);
-
-    FTimerHandle RespawnTimerHandle;
+    
     GetWorldTimerManager().SetTimer(RespawnTimerHandle, this, &ASTUBasePickUp::Respawn, RespawnTime);
     
 }
