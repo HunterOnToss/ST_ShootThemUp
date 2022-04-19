@@ -30,10 +30,7 @@ void ASTUAIController::Tick(float DeltaSeconds)
     Super::Tick(DeltaSeconds);
 
     const auto AimActor = GetFocusOnActor();
-    if (AimActor)
-    {
-        SetFocus(AimActor);
-    }
+    SetFocus(AimActor);
 }
 
 AActor* ASTUAIController::GetFocusOnActor() const

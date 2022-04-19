@@ -26,11 +26,9 @@ EBTNodeResult::Type USTUNextLocationTask::ExecuteTask(UBehaviorTreeComponent& Ow
             const auto NavSys = UNavigationSystemV1::GetCurrent(Pawn);
             if (NavSys)
             {
-                FNavLocation NavLoction;
-                const bool IsFound = NavSys->GetRandomReachablePointInRadius(Pawn->GetActorLocation(), Radius, NavLoction);
+                const bool IsFound = SearchLocation(NavSys, Pawn, Blackboard);
                 if (IsFound)
                 {
-                    Blackboard->SetValueAsVector(AimLocationKey.SelectedKeyName, NavLoction.Location);
                     return EBTNodeResult::Succeeded;
                 }
             }
@@ -39,3 +37,31 @@ EBTNodeResult::Type USTUNextLocationTask::ExecuteTask(UBehaviorTreeComponent& Ow
     
     return EBTNodeResult::Failed;
 }
+
+bool USTUNextLocationTask::SearchLocation(const UNavigationSystemV1* NavSys, const APawn* Pawn, UBlackboardComponent* Blackboard) const 
+{
+    FNavLocation NavLocation;
+    FVector Location = Pawn->GetActorLocation();
+
+    if (!SelfCenter)
+    {
+        const auto CenterActor = Cast<AActor>(Blackboard->GetValueAsObject(CenterActorKey.SelectedKeyName));
+        if (CenterActor)
+        {
+            Location = CenterActor->GetActorLocation();
+        }
+        else
+        {
+            return EBTNodeResult::Failed;
+        }
+    }
+                
+    const bool IsFound = NavSys->GetRandomReachablePointInRadius(Location, Radius, NavLocation);
+    if (IsFound)
+    {
+        Blackboard->SetValueAsVector(AimLocationKey.SelectedKeyName, NavLocation.Location);
+        return true;
+    }
+    return false;
+}
+
