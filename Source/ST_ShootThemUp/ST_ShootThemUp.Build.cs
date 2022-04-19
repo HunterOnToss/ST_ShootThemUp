@@ -34,6 +34,8 @@ public class ST_ShootThemUp : ModuleRules
 			"ST_ShootThemUp/Public/AI",
 			"ST_ShootThemUp/Public/AI/Tasks",
 			"ST_ShootThemUp/Public/AI/Services",
+			"ST_ShootThemUp/Public/AI/EQS",
+			
 			
 		});
 
