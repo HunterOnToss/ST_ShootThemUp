@@ -54,6 +54,7 @@ protected:
 	// =====================================================================  
 
 	virtual void BeginPlay() override;
+    virtual void OnDeath();
 
 public:	
 	// Called every frame
@@ -81,8 +82,6 @@ private:
 
 	void OnStartRunning();
     void OnStopRunning();
-
-	void OnDeath();
     void OnHealthChanged(float Health, float HealthDelta);
 
 	// For DYNAMIC delegate need UFUNCTION cuz correct work GC

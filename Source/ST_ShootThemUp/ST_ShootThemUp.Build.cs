@@ -16,6 +16,8 @@ public class ST_ShootThemUp : ModuleRules
 			"InputCore" ,
 			"Niagara",
 			"PhysicsCore",
+			"GameplayTasks",
+			"NavigationSystem",
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
@@ -29,6 +31,13 @@ public class ST_ShootThemUp : ModuleRules
 			"ST_ShootThemUp/Public/Weapon/Components",
 			"ST_ShootThemUp/Public/UI",
 			"ST_ShootThemUp/Public/Animation",
+			"ST_ShootThemUp/Public/AI",
+			"ST_ShootThemUp/Public/AI/Tasks",
+			"ST_ShootThemUp/Public/AI/Services",
+			"ST_ShootThemUp/Public/AI/EQS",
+			"ST_ShootThemUp/Public/AI/Decorator",
+			
+			
 		});
 
 		// Uncomment if you are using Slate UI
