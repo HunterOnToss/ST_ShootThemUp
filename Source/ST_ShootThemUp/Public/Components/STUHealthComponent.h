@@ -53,6 +53,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
     TSubclassOf<UCameraShakeBase> CameraShake;
 
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Team")
+    bool IsFriendFire = true;
+    
 	virtual void BeginPlay() override;
 
 private:
@@ -67,4 +70,5 @@ private:
 	void SetHealth(float NewHealth);
 
 	void PlayCameraShake();
+    bool IsFriend(const AController* OtherController) const;
 };
