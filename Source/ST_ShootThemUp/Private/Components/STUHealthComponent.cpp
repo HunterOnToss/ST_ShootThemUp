@@ -7,6 +7,7 @@
 #include "Engine/World.h"
 #include "TimerManager.h"
 #include "STUUtils.h"
+#include "STUGameModeBase.h"
 
 //#include "Dev/STUIceDamageType.h"
 //#include "Dev/STUFireDamageType.h"
@@ -65,6 +66,7 @@ void USTUHealthComponent::OnTakeAnyDamageHandle(
 
     if (IsDead())
     {
+        Killed(InstigatedBy);
         OnDeath.Broadcast();
     }
     else if (AutoHeal) 
@@ -135,4 +137,22 @@ bool USTUHealthComponent::IsFriend(const AController* OtherController) const
     }
     
     return false;
+}
+
+void USTUHealthComponent::Killed(AController* KillerController)
+{
+    if (GetWorld())
+    {
+        const auto GameMode = Cast<ASTUGameModeBase>(GetWorld()->GetAuthGameMode());
+        if (GameMode)
+        {
+            const auto OwnerPlayer = Cast<APawn>(GetOwner());
+            const auto VictimController = OwnerPlayer ? OwnerPlayer->GetController() : nullptr;
+
+            GameMode->Killed(KillerController, VictimController);
+        }
+    }
+    
+
+    
 }

@@ -38,6 +38,23 @@ UClass* ASTUGameModeBase::GetDefaultPawnClassForController_Implementation(AContr
     return Super::GetDefaultPawnClassForController_Implementation(InController);
 }
 
+void ASTUGameModeBase::Killed(AController* KillerController, AController* VictimController)
+{
+    const auto KillerState = KillerController ? Cast<ASTUPlayerState>(KillerController->PlayerState) : nullptr;
+    const auto VictimState = VictimController ? Cast<ASTUPlayerState>(VictimController->PlayerState) : nullptr;
+
+    if (KillerState)
+    {
+        KillerState->AddKill();
+    }
+
+    if (VictimState)
+    {
+        VictimState->AddDeath();
+    }
+    
+}
+
 void ASTUGameModeBase::SpawnBots() 
 {
     if (GetWorld())
@@ -78,6 +95,7 @@ void ASTUGameModeBase::GameTimerUpdate()
         else
         {
             UE_LOG(LogSTUGameModeBase, Display, TEXT("======= GAME OVER ======="));
+            LogPlayerInfo();
         }
     }
 }
@@ -149,6 +167,25 @@ void ASTUGameModeBase::SetPlayerColour(AController* Controller)
 
             Character->SetPlayerColor(PlayerState->GetTeamColor());
 
+        }
+    }
+}
+
+void ASTUGameModeBase::LogPlayerInfo()
+{
+    if (GetWorld())
+    {
+        for (auto It = GetWorld()->GetControllerIterator(); It; ++It)
+        {
+            const auto Controller = It->Get();
+            if (Controller)
+            {
+                const auto PlayerState = Cast<ASTUPlayerState>(Controller->PlayerState);
+                if (PlayerState)
+                {
+                    PlayerState->LogInfo();
+                }
+            }
         }
     }
 }

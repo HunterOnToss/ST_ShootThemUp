@@ -71,4 +71,6 @@ private:
 
 	void PlayCameraShake();
     bool IsFriend(const AController* OtherController) const;
+
+    void Killed(AController* KillerController);
 };
