@@ -57,4 +57,5 @@ private:
     void SpawnTraceFX(const FVector& TraceStart, const FVector& TraceEnd);
 
     void MakeTheDamage(const FHitResult& HitResult);
+    AController* GetController() const;
 };
