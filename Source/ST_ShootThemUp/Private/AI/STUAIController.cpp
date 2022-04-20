@@ -1,9 +1,10 @@
 // Shoot Them Up Game. All Right Reserved 2022.
 
 
-#include "AI/STUAIController.h"
+#include "AI/STUAIController.h" 
+#include "STURespawnComponent.h"
 #include "AI/STUAICharacter.h"
-#include "Components/STU_AIPerceptionComponent.h"
+#include "STU_AIPerceptionComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
 ASTUAIController::ASTUAIController()
@@ -11,6 +12,8 @@ ASTUAIController::ASTUAIController()
     STU_AIPerceptionComponent = CreateDefaultSubobject<USTU_AIPerceptionComponent>("AIPerceptionComponent");
     SetPerceptionComponent(*STU_AIPerceptionComponent);
 
+    RespawnComponent = CreateDefaultSubobject<USTURespawnComponent>("RespawnComponent");
+    
     bWantsPlayerState = true;
 }
 

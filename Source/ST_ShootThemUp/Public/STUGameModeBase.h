@@ -30,7 +30,9 @@ public:
     
     UFUNCTION(BlueprintCallable, Category="UI")
     int32 GetRoundSecondRemaining() const {return RoundCountDown;}
-    
+
+    void RespawnRequest(AController* Controller);
+
 protected:
     UPROPERTY(EditDefaultsOnly, Category="Game")
     TSubclassOf<AAIController>AIControllerClass;
@@ -58,4 +60,6 @@ private:
     FLinearColor DetermineColorByTeamID(int32 TeamID) const;
     void SetPlayerColour(AController* Controller);
     void LogPlayerInfo();
+
+    void StartRespawn(AController* Controller);
 };
