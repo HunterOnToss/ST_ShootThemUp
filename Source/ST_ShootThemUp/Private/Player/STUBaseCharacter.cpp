@@ -105,6 +105,16 @@ float ASTUBaseCharacter::GetMovementDirection() const
     return CrossProduct.IsZero() ? Degrees : Degrees * FMath::Sign(CrossProduct.Z);
 }
 
+void ASTUBaseCharacter::SetPlayerColor(const FLinearColor& Color)
+{
+    const auto MaterialInstance = GetMesh()->CreateAndSetMaterialInstanceDynamic(0);
+
+    if (MaterialInstance)
+    {
+        MaterialInstance->SetVectorParameterValue(MaterialColorName, Color);
+    }
+}
+
 void ASTUBaseCharacter::MoveForward(float Amount) 
 {
     IsMovingForward = Amount > 0.0f;
