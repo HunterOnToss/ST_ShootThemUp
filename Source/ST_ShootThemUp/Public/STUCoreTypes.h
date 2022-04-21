@@ -84,3 +84,27 @@ struct FImpactData
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "FX")
     FDecalData DecalData;
 };
+
+USTRUCT(BlueprintType)
+struct FGameData
+{
+    GENERATED_BODY()
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Name", meta=(ClampMin="1", ClampMax="32"));
+    int32 PlayerNum = 2;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Name", meta=(ClampMin="1", ClampMax="10"));
+    int32 RoundNums = 3;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Name", meta=(ClampMin="5", ClampMax="600"));
+    int32 RoundTime = 10; // seconds
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+    FLinearColor DefaultTeamColor = FLinearColor::Red;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+    TArray<FLinearColor> TeamColors;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Game", meta=(ClampMin="3", ClampMax="20"))
+    int32 RespawnTime = 5;
+};

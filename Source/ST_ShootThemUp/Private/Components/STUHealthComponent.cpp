@@ -6,7 +6,8 @@
 #include "GameFramework/Controller.h"
 #include "Engine/World.h"
 #include "TimerManager.h"
-#include "Camera/CameraShakeBase.h"
+#include "STUUtils.h"
+#include "STUGameModeBase.h"
 
 //#include "Dev/STUIceDamageType.h"
 //#include "Dev/STUFireDamageType.h"
@@ -55,12 +56,17 @@ void USTUHealthComponent::OnTakeAnyDamageHandle(
     if (Damage <= 0 || IsDead() || !GetWorld())
         return;
 
+    const bool Friend = IsFriend(InstigatedBy);
+
+    if (!IsFriendFire && Friend) return;
+    
     SetHealth(Health - Damage);
 
     GetWorld()->GetTimerManager().ClearTimer(HealTimerHandle);
 
     if (IsDead())
     {
+        Killed(InstigatedBy);
         OnDeath.Broadcast();
     }
     else if (AutoHeal) 
@@ -115,4 +121,38 @@ void USTUHealthComponent::PlayCameraShake()
             Controller->PlayerCameraManager->StartCameraShake(CameraShake);
         }
     }
+}
+
+bool USTUHealthComponent::IsFriend(const AController* OtherController) const
+{
+    const auto OwnerPawn = Cast<APawn>(GetOwner());
+    if (OwnerPawn)
+    {
+        const auto OwnerController = OwnerPawn->GetController();
+        if (OwnerController)
+        {
+            const bool AreEnemies = STUUtils::AreEnemies(OwnerController, OtherController);
+            return !AreEnemies;
+        }
+    }
+    
+    return false;
+}
+
+void USTUHealthComponent::Killed(AController* KillerController)
+{
+    if (GetWorld())
+    {
+        const auto GameMode = Cast<ASTUGameModeBase>(GetWorld()->GetAuthGameMode());
+        if (GameMode)
+        {
+            const auto OwnerPlayer = Cast<APawn>(GetOwner());
+            const auto VictimController = OwnerPlayer ? OwnerPlayer->GetController() : nullptr;
+
+            GameMode->Killed(KillerController, VictimController);
+        }
+    }
+    
+
+    
 }
