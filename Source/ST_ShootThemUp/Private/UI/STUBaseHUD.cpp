@@ -25,6 +25,15 @@ void ASTUBaseHUD::BeginPlay()
     {
         PlayerHUDWidget->AddToViewport();
     }
+
+    if (GetWorld())
+    {
+        const auto GameMode = Cast<ASTUGameModeBase>(GetWorld()->GetAuthGameMode());
+        if (GameMode)
+        {
+            GameMode->OnMatchStateChange.AddUObject(this, &ASTUBaseHUD::OnMatchStateChange);
+        }
+    }
 }
 
 void ASTUBaseHUD::DrawCrossHair()
@@ -42,5 +51,5 @@ void ASTUBaseHUD::DrawCrossHair()
 
 void ASTUBaseHUD::OnMatchStateChange(ESTUMatchState State)
 {
-    
+    UE_LOG(LogSTUGameHUD, Display, TEXT("GameMode State Change in : %s"), *UEnum::GetValueAsString(State));
 }
