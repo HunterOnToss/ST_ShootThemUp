@@ -7,6 +7,8 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/InputComponent.h"
 #include "STUWeaponComponent.h"
+#include "Components/SphereComponent.h"
+#include "Components/CapsuleComponent.h"
 
 ASTUPlayerCharacter::ASTUPlayerCharacter(const FObjectInitializer& ObjectInit) : Super(ObjectInit)  
 {
@@ -19,7 +21,25 @@ ASTUPlayerCharacter::ASTUPlayerCharacter(const FObjectInitializer& ObjectInit) :
     
     CameraComponent = CreateDefaultSubobject<UCameraComponent>("CameraComponent");
     CameraComponent->SetupAttachment(SpringArmComponent);
+
+    CameraCollisionComponent = CreateDefaultSubobject<USphereComponent>("CameraCollisionComponent");
+    CameraCollisionComponent->SetupAttachment(CameraComponent);
+    CameraCollisionComponent->SetSphereRadius(10.0f);
+    CameraCollisionComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
+    
 }
+
+void ASTUPlayerCharacter::BeginPlay()
+{
+    Super::BeginPlay();
+
+    check(CameraCollisionComponent);
+
+    CameraCollisionComponent->OnComponentBeginOverlap.AddDynamic(this, &ASTUPlayerCharacter::OnCameraBeginOverlap);
+    CameraCollisionComponent->OnComponentEndOverlap.AddDynamic(this, &ASTUPlayerCharacter::OnCameraEndOverlap);
+    
+}
+
 
 void ASTUPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -70,6 +90,39 @@ void ASTUPlayerCharacter::OnStartRunning()
 void ASTUPlayerCharacter::OnStopRunning() 
 {
     WantsToRun = false;
+}
+
+void ASTUPlayerCharacter::OnCameraBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+    int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+    CheckCameraOverlap();
+}
+
+void ASTUPlayerCharacter::OnCameraEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+    int32 OtherBodyIndex)
+{
+    CheckCameraOverlap();
+}
+
+void ASTUPlayerCharacter::CheckCameraOverlap()
+{
+    const auto HideMesh = CameraCollisionComponent->IsOverlappingComponent(GetCapsuleComponent());
+
+    GetMesh()->SetOwnerNoSee(HideMesh);
+
+    TArray<USceneComponent*> MeshChildren;
+    GetMesh()->GetChildrenComponents(true, MeshChildren);
+
+    for (const auto Child : MeshChildren)
+    {
+        const auto ChildGeometry = Cast<UPrimitiveComponent>(Child);
+
+        if (ChildGeometry)
+        {
+            ChildGeometry->SetOwnerNoSee(HideMesh);
+        }
+    }
+    
 }
 
 bool ASTUPlayerCharacter::IsRunning() const
