@@ -24,6 +24,9 @@ protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
     TSubclassOf<UUserWidget> PauseWidgetKlass;
 
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
+    TSubclassOf<UUserWidget> GameOverWidgetKlass;
+    
 	virtual void BeginPlay() override;
 
 private:
