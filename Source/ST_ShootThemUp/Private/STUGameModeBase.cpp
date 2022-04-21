@@ -212,6 +212,18 @@ bool ASTUGameModeBase::SetPause(APlayerController* PC, FCanUnpause CanUnpauseDel
     return PauseSet;
 }
 
+bool ASTUGameModeBase::ClearPause()
+{
+    const auto PauseCleared =  Super::ClearPause();
+
+    if (PauseCleared)
+    {
+        SetMatchState(ESTUMatchState::InProgress);
+    }
+
+    return PauseCleared;
+}
+
 void ASTUGameModeBase::StartRespawn(AController* Controller)
 {
     const bool RespawnAvailable = RoundCountDown > MinRoundTimeForRespawn + GameData.RespawnTime;
