@@ -36,8 +36,10 @@ public class ST_ShootThemUp : ModuleRules
 			"ST_ShootThemUp/Public/AI/Services",
 			"ST_ShootThemUp/Public/AI/EQS",
 			"ST_ShootThemUp/Public/AI/Decorator",
-			
-			
+			"ST_ShootThemUp/Public/Menu",
+			"ST_ShootThemUp/Public/Menu/UI"
+
+
 		});
 
 		// Uncomment if you are using Slate UI
