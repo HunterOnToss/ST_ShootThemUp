@@ -10,6 +10,8 @@
 #include "Components/Button.h"
 #include "Kismet/GameplayStatics.h"
 
+extern const FName TEST_LEVEL_NAME;
+
 void USTUGameOverWidget::NativeOnInitialized()
 {
     Super::NativeOnInitialized();
@@ -21,6 +23,11 @@ void USTUGameOverWidget::NativeOnInitialized()
         {
             GameMode->OnMatchStateChange.AddUObject(this, &USTUGameOverWidget::OnMatchStateChange);
         }
+    }
+
+    if (ResetLevelButton)
+    {
+        ResetLevelButton->OnClicked.AddDynamic(this, &USTUGameOverWidget::OnResetLevel);
     }
 }
 
@@ -65,5 +72,7 @@ void USTUGameOverWidget::UpdatePlayerStat()
 
 void USTUGameOverWidget::OnResetLevel()
 {
+    const FString CurrentLevelName = UGameplayStatics::GetCurrentLevelName(this);
     
+    UGameplayStatics::OpenLevel(this, FName(CurrentLevelName));
 }
