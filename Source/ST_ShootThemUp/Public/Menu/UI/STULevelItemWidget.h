@@ -17,6 +17,15 @@ class ST_SHOOTTHEMUP_API USTULevelItemWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
+public:
+
+    FOnLevelSelectedSignature OnLevelSelected;
+
+    void SetLevelData(const FLevelData& Data);
+    FLevelData GetLevelData() const { return LevelData; }
+
+    void SetSelected(bool IsSelected);
+    
 protected:
 
     UPROPERTY(meta=(BindWidget))
@@ -32,4 +41,12 @@ protected:
     UImage* FrameImage = nullptr;
 
     virtual void NativeOnInitialized() override;
+
+private:
+
+    FLevelData LevelData;
+
+    UFUNCTION()
+    void OnLevelItemClicked();
+    
 };
