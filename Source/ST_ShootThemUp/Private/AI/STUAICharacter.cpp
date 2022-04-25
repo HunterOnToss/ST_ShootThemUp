@@ -27,6 +27,7 @@ ASTUAICharacter::ASTUAICharacter(const FObjectInitializer& ObjInit) : Super(ObjI
     HealthWidgetComponent = CreateDefaultSubobject<UWidgetComponent>("HealthWidgetComponent");
     HealthWidgetComponent->SetupAttachment(GetRootComponent());
     HealthWidgetComponent->SetWidgetSpace(EWidgetSpace::Screen);
+    HealthWidgetComponent->SetDrawAtDesiredSize(true);
 }
 
 void ASTUAICharacter::BeginPlay()
@@ -34,6 +35,13 @@ void ASTUAICharacter::BeginPlay()
     Super::BeginPlay();
 
     check(HealthWidgetComponent);
+}
+
+void ASTUAICharacter::Tick(float DeltaSeconds)
+{
+    Super::Tick(DeltaSeconds);
+
+    UpdateHealthWidgetVisibility();
 }
 
 void ASTUAICharacter::OnDeath()
@@ -58,4 +66,15 @@ void ASTUAICharacter::OnHealthChanged(float Health, float HealthDelta)
     {
         HealthBarWidget->SetHealthPercent(HealthComponent->GetHealthWithPercent());
     }
+}
+
+void ASTUAICharacter::UpdateHealthWidgetVisibility()
+{
+    if (GetWorld() && GetWorld()->GetFirstPlayerController() && GetWorld()->GetFirstPlayerController()->GetPawnOrSpectator())
+    {
+        const auto PlayerLocation = GetWorld()->GetFirstPlayerController()->GetPawnOrSpectator()->GetActorLocation();
+        const auto Distance = FVector::Distance(PlayerLocation, GetActorLocation());
+        HealthWidgetComponent->SetVisibility(Distance < HealthVisibilityDistance, true);
+    }
+    
 }
