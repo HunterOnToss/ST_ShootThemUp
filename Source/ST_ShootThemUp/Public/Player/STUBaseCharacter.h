@@ -46,6 +46,7 @@ protected:
     
 	virtual void BeginPlay() override;
     virtual void OnDeath();
+    virtual void OnHealthChanged(float Health, float HealthDelta);
 
 public:	
 	// Called every frame
@@ -58,10 +59,9 @@ public:
     float GetMovementDirection() const;
     
     void SetPlayerColor(const FLinearColor& Color);
-
+    
 private:
-    void OnHealthChanged(float Health, float HealthDelta);
-
+    
 	// For DYNAMIC delegate need UFUNCTION cuz correct work GC
     UFUNCTION()
     void OnGroundLanded(const FHitResult& Hit);

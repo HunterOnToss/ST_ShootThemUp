@@ -2,20 +2,21 @@
 
 
 #include "UI/STUPlayerHUDWidget.h"
-#include "Components/STUHealthComponent.h"
-#include "Components/STUWeaponComponent.h"
+#include "STUHealthComponent.h"
+#include "STUWeaponComponent.h"
+#include "STUPlayerState.h"
+#include "Components/ProgressBar.h"
 #include "STUUtils.h"
 
-bool USTUPlayerHUDWidget::Initialize()
+void USTUPlayerHUDWidget::NativeOnInitialized()
 {
     if (GetOwningPlayer())
     {
         GetOwningPlayer()->GetOnNewPawnNotifier().AddUObject(this, &USTUPlayerHUDWidget::OnNewPawn);
         OnNewPawn(GetOwningPlayerPawn());
     }
-
-    return Super::Initialize();
 }
+
 
 void USTUPlayerHUDWidget::OnNewPawn(APawn* NewPawn)
 {
@@ -26,6 +27,17 @@ void USTUPlayerHUDWidget::OnNewPawn(APawn* NewPawn)
     {
         HealthComponent->OnHealthChanged.AddUObject(this, &USTUPlayerHUDWidget::OnHealthChanged);
     }
+
+    UpdateHealthBar();
+}
+
+void USTUPlayerHUDWidget::UpdateHealthBar()
+{
+    if (HealthProgressBar)
+    {
+        HealthProgressBar->SetFillColorAndOpacity(GetHealthPercent() > PercentColorThreshold ? GoodColor : BadColor);
+    }
+    
 }
 
 float USTUPlayerHUDWidget::GetHealthPercent() const
@@ -76,11 +88,50 @@ bool USTUPlayerHUDWidget::IsPlayerSpectating() const
     return Controller && Controller->GetStateName() == NAME_Spectating;
 }
 
+int32 USTUPlayerHUDWidget::GetKillsNum() const
+{
+    const auto Controller = GetOwningPlayer();
+    if(Controller)
+    {
+        const auto PlayerState = Cast<ASTUPlayerState>(Controller->PlayerState);
+
+        return PlayerState ? PlayerState->GetKillsNum() : 0;
+    }
+    
+    return 0;
+}
+
+FString USTUPlayerHUDWidget::FormatBullets(const int32 BulletsNum) const
+{
+    constexpr  int32 MaxLen = 3;
+
+    FString BulletStr = FString::FromInt(BulletsNum);
+    const auto SymbolsNumToAdd = MaxLen - BulletStr.Len();
+    
+    if (SymbolsNumToAdd > 0)
+    {
+        constexpr TCHAR PrefixSymbol = '0';
+        UE_LOG(LogTemp, Display, TEXT("%s"), *BulletStr)
+        BulletStr = FString::ChrN(SymbolsNumToAdd, PrefixSymbol).Append(BulletStr);
+        UE_LOG(LogTemp, Display, TEXT("%s"), *BulletStr)
+    }
+    
+    return BulletStr;
+    
+}
+
 void USTUPlayerHUDWidget::OnHealthChanged(float Health, float HealthDelta) 
 {
     if (HealthDelta < 0.0f)
     {
         OnTakeDamage();
+
+        if (!IsAnimationPlaying(DamageAnimation))
+        {
+            PlayAnimation(DamageAnimation);
+        }
     }
+
+    UpdateHealthBar();
 }
 
