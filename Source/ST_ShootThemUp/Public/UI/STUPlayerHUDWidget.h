@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Blueprint/UserWidget.h"
+#include "STUBaseWidget.h"
 #include "STUCoreTypes.h"
 #include "STUPlayerHUDWidget.generated.h"
 
 class UProgressBar;
 
 UCLASS()
-class ST_SHOOTTHEMUP_API USTUPlayerHUDWidget : public UUserWidget
+class ST_SHOOTTHEMUP_API USTUPlayerHUDWidget : public USTUBaseWidget
 {
 	GENERATED_BODY()
 
@@ -44,6 +44,9 @@ protected:
 
     UPROPERTY(meta=(BindWidget))
     UProgressBar* HealthProgressBar;
+
+    UPROPERTY(meta=(BindWidgetAnim), Transient)
+    UWidgetAnimation* DamageAnimation;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="UI")
     float PercentColorThreshold = 0.3f;

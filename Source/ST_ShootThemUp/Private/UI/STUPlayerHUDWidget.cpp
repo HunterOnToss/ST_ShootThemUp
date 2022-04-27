@@ -104,13 +104,13 @@ int32 USTUPlayerHUDWidget::GetKillsNum() const
 FString USTUPlayerHUDWidget::FormatBullets(const int32 BulletsNum) const
 {
     constexpr  int32 MaxLen = 3;
-    constexpr TCHAR PrefixSymbol = '0';
-    
+
     FString BulletStr = FString::FromInt(BulletsNum);
     const auto SymbolsNumToAdd = MaxLen - BulletStr.Len();
     
     if (SymbolsNumToAdd > 0)
     {
+        constexpr TCHAR PrefixSymbol = '0';
         UE_LOG(LogTemp, Display, TEXT("%s"), *BulletStr)
         BulletStr = FString::ChrN(SymbolsNumToAdd, PrefixSymbol).Append(BulletStr);
         UE_LOG(LogTemp, Display, TEXT("%s"), *BulletStr)
@@ -125,6 +125,11 @@ void USTUPlayerHUDWidget::OnHealthChanged(float Health, float HealthDelta)
     if (HealthDelta < 0.0f)
     {
         OnTakeDamage();
+
+        if (!IsAnimationPlaying(DamageAnimation))
+        {
+            PlayAnimation(DamageAnimation);
+        }
     }
 
     UpdateHealthBar();
