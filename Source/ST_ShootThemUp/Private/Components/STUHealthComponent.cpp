@@ -1,13 +1,13 @@
 // Shoot Them Up Game. All Right Reserved 2022.
 
 #include "Components/STUHealthComponent.h"
-#include "GameFramework/Actor.h"
-#include "GameFramework/Pawn.h"
+#include "GameFramework/Character.h"
 #include "GameFramework/Controller.h"
 #include "Engine/World.h"
 #include "TimerManager.h"
 #include "STUUtils.h"
 #include "STUGameModeBase.h"
+#include "PhysicalMaterials/PhysicalMaterial.h"
 
 //#include "Dev/STUIceDamageType.h"
 //#include "Dev/STUFireDamageType.h"
@@ -47,46 +47,32 @@ void USTUHealthComponent::BeginPlay()
 	if (ComponentOwner)
     {
         ComponentOwner->OnTakeAnyDamage.AddDynamic(this, &USTUHealthComponent::OnTakeAnyDamageHandle);
+        ComponentOwner->OnTakePointDamage.AddDynamic(this, &USTUHealthComponent::OnTakePointDamage);
+        ComponentOwner->OnTakeRadialDamage.AddDynamic(this, &USTUHealthComponent::OnTakeRadialDamage);
+	    
 	}
 }
 
 void USTUHealthComponent::OnTakeAnyDamageHandle(
     AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
 {
-    if (Damage <= 0 || IsDead() || !GetWorld())
-        return;
-
-    const bool Friend = IsFriend(InstigatedBy);
-
-    if (!IsFriendFire && Friend) return;
     
-    SetHealth(Health - Damage);
+}
 
-    GetWorld()->GetTimerManager().ClearTimer(HealTimerHandle);
+void USTUHealthComponent::OnTakePointDamage(AActor* DamagedActor, float Damage, AController* InstigatedBy, FVector HitLocation,
+    UPrimitiveComponent* FHitComponent, FName BoneName, FVector ShotFromDirection, const UDamageType* DamageType, AActor* DamageCauser)
+{
+    // POINT
+    const float FinalDamage = Damage * GetPointDamageModifier(DamagedActor, BoneName);
+    UE_LOG(LogHealthComponent, Display, TEXT("%f final damage: %f, Bone %s"), Damage, FinalDamage, *BoneName.ToString());
+    ApplyDamage(FinalDamage, InstigatedBy);
+}
 
-    if (IsDead())
-    {
-        Killed(InstigatedBy);
-        OnDeath.Broadcast();
-    }
-    else if (AutoHeal) 
-    {
-        GetWorld()->GetTimerManager().SetTimer(HealTimerHandle, this, &USTUHealthComponent::HealUpdate, HealUpdateTime, true, HealDelay);
-    }
-
-    PlayCameraShake();
-
-    /* if (DamageType)
-    {
-        if (DamageType->IsA<USTUFireDamageType>())
-        {
-            UE_LOG(LogHealthComponent, Display, TEXT("So Hot :("));
-        }
-        else if (DamageType->IsA<USTUIceDamageType>())
-        {
-            UE_LOG(LogHealthComponent, Display, TEXT("She is cold as ice ^^"));
-        }
-	}*/
+void USTUHealthComponent::OnTakeRadialDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, FVector Origin,
+    FHitResult HitInfo, AController* InstigatedBy, AActor* DamageCauser)
+{
+    // RADIAL
+    ApplyDamage(Damage, InstigatedBy);
 }
 
 void USTUHealthComponent::HealUpdate()
@@ -155,4 +141,59 @@ void USTUHealthComponent::Killed(AController* KillerController)
     
 
     
+}
+
+void USTUHealthComponent::ApplyDamage(float Damage, AController* InstigatedBy)
+{
+    if (Damage <= 0 || IsDead() || !GetWorld())
+        return;
+
+    const bool Friend = IsFriend(InstigatedBy);
+
+    if (!IsFriendFire && Friend) return;
+    
+    SetHealth(Health - Damage);
+
+    GetWorld()->GetTimerManager().ClearTimer(HealTimerHandle);
+
+    if (IsDead())
+    {
+        Killed(InstigatedBy);
+        OnDeath.Broadcast();
+    }
+    else if (AutoHeal) 
+    {
+        GetWorld()->GetTimerManager().SetTimer(HealTimerHandle, this, &USTUHealthComponent::HealUpdate, HealUpdateTime, true, HealDelay);
+    }
+
+    PlayCameraShake();
+
+    /* if (DamageType)
+    {
+        if (DamageType->IsA<USTUFireDamageType>())
+        {
+            UE_LOG(LogHealthComponent, Display, TEXT("So Hot :("));
+        }
+        else if (DamageType->IsA<USTUIceDamageType>())
+        {
+            UE_LOG(LogHealthComponent, Display, TEXT("She is cold as ice ^^"));
+        }
+    }*/
+}
+
+float USTUHealthComponent::GetPointDamageModifier(AActor* DamagedActor, const FName& BoneName)
+{
+    const auto Character = Cast<ACharacter>(DamagedActor);
+
+    if (Character && Character->GetMesh() && Character->GetMesh()->GetBodyInstance(BoneName))
+    {
+        const auto PhysMaterial = Character->GetMesh()->GetBodyInstance(BoneName)->GetSimplePhysicalMaterial();
+
+        if (DamageModifiers.Contains(PhysMaterial))
+        {
+            return DamageModifiers[PhysMaterial];
+        }
+    }
+
+    return 1;
 }

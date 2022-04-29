@@ -142,7 +142,9 @@ void ASTURifleWeapon::MakeTheDamage(const FHitResult& HitResult)
     if (!DamageActor)
         return;
 
-    DamageActor->TakeDamage(DamageAmount, FDamageEvent(), GetController(), this);
+    FPointDamageEvent PointDamageEvent;
+    PointDamageEvent.HitInfo = HitResult;
+    DamageActor->TakeDamage(DamageAmount, PointDamageEvent, GetController(), this);
 }
 
 AController* ASTURifleWeapon::GetController() const
