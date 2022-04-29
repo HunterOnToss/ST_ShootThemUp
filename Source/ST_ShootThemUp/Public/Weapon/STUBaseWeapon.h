@@ -10,6 +10,7 @@
 class USkeletalMeshComponent;
 class UNiagaraSystem;
 class UNiagaraComponent;
+class USoundCue;
 
 UCLASS()
 class ST_SHOOTTHEMUP_API ASTUBaseWeapon : public AActor
@@ -61,6 +62,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
     float TraceMaxDistance = 15000.0f;
 
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Sound")
+    USoundCue* FireSound;
+    
 	virtual void BeginPlay() override;
 
 	virtual void MakeTheShot();

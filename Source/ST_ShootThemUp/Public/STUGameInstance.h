@@ -7,6 +7,8 @@
 #include "STUCoreTypes.h"
 #include "STUGameInstance.generated.h"
 
+class USoundClass;
+
 UCLASS()
 class ST_SHOOTTHEMUP_API USTUGameInstance : public UGameInstance
 {
@@ -18,6 +20,8 @@ public:
     void SetStartupLevel(const FLevelData& Data) { StartupLevel = Data;}
     TArray<FLevelData> GetLevelsData() const { return LevelsData;}
     FName GetMenuLevelName() const { return  MenuLevelName;}
+
+    void ToggleVolume();
     
 protected:
 
@@ -27,6 +31,9 @@ protected:
     UPROPERTY(EditDefaultsOnly, Category="Game")
     FName MenuLevelName = NAME_None;
 
+    UPROPERTY(EditDefaultsOnly, Category="Sound")
+    USoundClass* MasterSoundClass;
+    
 private:
     
     FLevelData StartupLevel;
