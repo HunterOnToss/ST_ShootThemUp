@@ -111,9 +111,9 @@ FString USTUPlayerHUDWidget::FormatBullets(const int32 BulletsNum) const
     if (SymbolsNumToAdd > 0)
     {
         constexpr TCHAR PrefixSymbol = '0';
-        UE_LOG(LogTemp, Display, TEXT("%s"), *BulletStr)
+        
         BulletStr = FString::ChrN(SymbolsNumToAdd, PrefixSymbol).Append(BulletStr);
-        UE_LOG(LogTemp, Display, TEXT("%s"), *BulletStr)
+        
     }
     
     return BulletStr;
