@@ -80,6 +80,8 @@ private:
     void ApplyDamage(float Damage, AController* InstigatedBy);
 
     float GetPointDamageModifier(AActor* DamagedActor, const FName& BoneName);
+
+    void ReportDamage(float Damage, AController* InstigatedBy);
     
     // ==============================================
     

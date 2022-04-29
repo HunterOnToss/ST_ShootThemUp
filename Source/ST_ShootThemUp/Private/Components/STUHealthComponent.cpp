@@ -8,6 +8,7 @@
 #include "STUUtils.h"
 #include "STUGameModeBase.h"
 #include "PhysicalMaterials/PhysicalMaterial.h"
+#include "Perception/AISense_Damage.h"
 
 //#include "Dev/STUIceDamageType.h"
 //#include "Dev/STUFireDamageType.h"
@@ -167,6 +168,7 @@ void USTUHealthComponent::ApplyDamage(float Damage, AController* InstigatedBy)
     }
 
     PlayCameraShake();
+    ReportDamage(Damage, InstigatedBy);
 
     /* if (DamageType)
     {
@@ -196,4 +198,18 @@ float USTUHealthComponent::GetPointDamageModifier(AActor* DamagedActor, const FN
     }
 
     return 1;
+}
+
+void USTUHealthComponent::ReportDamage(float Damage, AController* InstigatedBy)
+{
+    if (InstigatedBy && InstigatedBy->GetPawn() && GetOwner())
+    {
+        UAISense_Damage::ReportDamageEvent(GetWorld(),
+        GetOwner(),
+        InstigatedBy->GetPawn(),
+        Damage,
+        InstigatedBy->GetPawn()->GetActorLocation(),
+        GetOwner()->GetActorLocation());
+        
+    }
 }

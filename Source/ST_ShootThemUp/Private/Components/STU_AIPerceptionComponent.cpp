@@ -5,6 +5,7 @@
 #include "AIController.h"
 #include "STUUtils.h"
 #include "STUHealthComponent.h"
+#include "Perception/AISense_Damage.h"
 #include "Perception/AISense_Sight.h"
 
 AActor* USTU_AIPerceptionComponent::GetClosestEnemy() const
@@ -14,7 +15,11 @@ AActor* USTU_AIPerceptionComponent::GetClosestEnemy() const
 
     if (PerceiveActors.Num() == 0)
     {
-        return nullptr;
+        GetCurrentlyPerceivedActors(UAISense_Damage::StaticClass(), PerceiveActors);
+        if (PerceiveActors.Num() == 0)
+        {
+            return nullptr;    
+        }
     }
 
     const auto Controller = Cast<AAIController>(GetOwner());
