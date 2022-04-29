@@ -36,6 +36,21 @@ void ASTURifleWeapon::StopFire()
     SetFXActive(false);
 }
 
+void ASTURifleWeapon::Zoom(bool Enable)
+{
+    const auto Controller = Cast<APlayerController>(GetController());
+    
+    if (Controller && Controller->PlayerCameraManager)
+    {
+        if (Enable)
+        {
+            DefaultCameraFOV = Controller->PlayerCameraManager->GetFOVAngle();    
+        }
+        
+        Controller->PlayerCameraManager->SetFOV(Enable ? FOVZoomAngle: DefaultCameraFOV);
+    }
+}
+
 void ASTURifleWeapon::MakeTheShot()
 {
     if (!GetWorld() || IsAmmoEmpty())
